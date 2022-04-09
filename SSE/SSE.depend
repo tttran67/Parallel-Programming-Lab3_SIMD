@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1649151475 source:d:\my projects\gcc test proj\lesson2\sse\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<bitset>
+
