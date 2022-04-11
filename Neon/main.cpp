@@ -2,7 +2,7 @@
 #include<arm_neon.h>
 #include<sys/time.h>
 using namespace std;
-const int maxN = 1000;
+const int maxN = 500;
 float32_t A[maxN][maxN];
 float32x4_t va = vmovq_n_f32(0);
 float32x4_t vx = vmovq_n_f32(0);
@@ -196,22 +196,22 @@ int main()
     gettimeofday(&head,NULL);
     LU();
     gettimeofday(&tail,NULL);
-    cout<<"LU Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000000+(tail.tv_usec-head.tv_usec)<<"ms"<<endl;
-    ReSet();
-    gettimeofday(&head,NULL);
-    Division();
-    gettimeofday(&tail,NULL);
-    cout<<"Devision Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000000+(tail.tv_usec-head.tv_usec)<<"ms"<<endl;
-    ReSet();
-    gettimeofday(&head,NULL);
-    Elimination();
-    gettimeofday(&tail,NULL);
-    cout<<"Elimination Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000000+(tail.tv_usec-head.tv_usec)<<"ms"<<endl;
-    ReSet();
-    gettimeofday(&head,NULL);
-    Align_LU();
-    gettimeofday(&tail,NULL);
-    cout<<"LU Align Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000000+(tail.tv_usec-head.tv_usec)<<"ms"<<endl;
+    cout<<"LU Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
+ //   ReSet();
+  //  gettimeofday(&head,NULL);
+  //  Division();
+  //  gettimeofday(&tail,NULL);
+  //  cout<<"Devision Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+  //  ReSet();
+   // gettimeofday(&head,NULL);
+   // Elimination();
+   // gettimeofday(&tail,NULL);
+   // cout<<"Elimination Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+  //  ReSet();
+  //  gettimeofday(&head,NULL);
+  //  Align_LU();
+  //  gettimeofday(&tail,NULL);
+  //  cout<<"LU Align Method, N: "<<maxN<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
 
 
     return 0;

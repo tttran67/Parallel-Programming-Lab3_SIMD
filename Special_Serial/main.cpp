@@ -130,7 +130,7 @@ int main()
     gettimeofday(&head,NULL);
     Serial();
     gettimeofday(&tail,NULL);
-    cout<<"Special Gauss, Serial version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+    cout<<"Special Gauss, Serial version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
     //Print();
     return 0;
 }

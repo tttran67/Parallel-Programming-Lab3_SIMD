@@ -20,7 +20,7 @@ unsigned int R [Columnnum][ArrayColumn];
 unsigned int E [Enum][ArrayColumn];
 int First[Enum];
 bitset<32> MyBit(0);
-__m128i te,tr;
+__m128 te,tr;
 int Find_First(int index){
     int j = 0;
     int cnt = 0;
@@ -91,19 +91,29 @@ void Set_R(int eindex,int rindex){
     }
 }
 void XOR(int eindex,int rindex){//we do parallel programming here.
-    /*for(int j = 0;j < ArrayColumn; j++){
-        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
-    }*/
     int j = 0;
     for(;j + 4 <= ArrayColumn; j += 4){
         te = _mm_loadu_ps((float*)&(E[eindex][j]));
-        //vaE = vld1q_u32(&(E[eindex][j]));
         tr = _mm_loadu_ps((float*)&(R[rindex][j]));
-        //vaR = vld1q_u32(&(R[rindex][j]));
         te = _mm_xor_ps(te,tr);
-        //vaE = veorq_u32(vaE,vaR);
         _mm_store_ss((float*)&(E[eindex][j]),te);
-        //vst1q_u32(&(E[eindex][j],vaE));
+    }
+    for(;j < ArrayColumn; j++){
+        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
+    }
+
+}
+void Align_XOR(int eindex,int rindex){//we do parallel programming here.
+    int j = 0;
+    while((eindex * ArrayColumn + j) % 4 != 0){//we do alignment here.
+        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
+        j++;
+    }
+    for(;j + 4 <= ArrayColumn; j += 4){
+        te = _mm_loadu_ps((float*)&(E[eindex][j]));
+        tr = _mm_loadu_ps((float*)&(R[rindex][j]));
+        te = _mm_xor_ps(te,tr);
+        _mm_store_ss((float*)&(E[eindex][j]),te);
     }
     for(;j < ArrayColumn; j++){
         E[eindex][j] = E[eindex][j] ^ R[rindex][j];
@@ -115,6 +125,7 @@ void SSE(){
         while(First[i] != -1){
             if(!Is_NULL(First[i])){
                 XOR(i,First[i]);
+                //Align_XOR(i,First[i]);
                 First[i] = Find_First(i);
             }
             else{
@@ -152,7 +163,7 @@ int main()
     gettimeofday(&head,NULL);
     SSE();
     gettimeofday(&tail,NULL);
-    cout<<"Special Gauss, SSE version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+    cout<<"Special Gauss, SSE version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
     //Print();
     return 0;
 }

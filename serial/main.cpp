@@ -1,7 +1,7 @@
 #include <iostream>
 #include<sys/time.h>
 using namespace std;
-const int maxN = 1000;
+const int maxN = 500;
 float A[maxN][maxN];
 void ReSet(){
     for(int i = 0;i < maxN; i++){
@@ -13,8 +13,10 @@ void ReSet(){
     }
     for(int k = 0;k < maxN; k++)
         for(int i = k + 1;i < maxN; i++)
-            for(int j = 0;j < maxN; j++)
+            for(int j = 0;j < maxN; j++){
                 A[i][j] += A[k][j];
+            }
+
 }
 void LU(){
     for(int k = 0;k < maxN; k++){
@@ -40,7 +42,7 @@ int main()
     gettimeofday(&head,NULL);
     LU();
     gettimeofday(&tail,NULL);
-    cout<<"N: "<<maxN<<" Time: "<<(tail.tv_sec-head.tv_sec)*1000000+(tail.tv_usec-head.tv_usec)<<"ms";
+    cout<<"N: "<<maxN<<" Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms";
 
     return 0;
 }

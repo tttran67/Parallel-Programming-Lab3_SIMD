@@ -87,10 +87,24 @@ void Set_R(int eindex,int rindex){
     }
 }
 void XOR(int eindex,int rindex){//we do parallel programming here.
-    /*for(int j = 0;j < ArrayColumn; j++){
-        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
-    }*/
     int j = 0;
+    for(;j + 4 <= ArrayColumn; j += 4){
+        vaE = vld1q_u32(&(E[eindex][j]));
+        vaR = vld1q_u32(&(R[rindex][j]));
+        vaE = veorq_u32(vaE,vaR);
+        vst1q_u32(&(E[eindex][j]),vaE);
+    }
+    for(;j < ArrayColumn; j++){
+        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
+    }
+
+}
+void Align_XOR(int eindex,int rindex){//we do parallel programming here.
+    int j = 0;
+    while((eindex * ArrayColumn + j) % 4 != 0){//we do alignment here.
+        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
+        j++;
+    }
     for(;j + 4 <= ArrayColumn; j += 4){
         vaE = vld1q_u32(&(E[eindex][j]));
         vaR = vld1q_u32(&(R[rindex][j]));
@@ -107,6 +121,7 @@ void Neon(){
         while(First[i] != -1){
             if(!Is_NULL(First[i])){
                 XOR(i,First[i]);
+                //Align_XOR(i,First[i]);
                 First[i] = Find_First(i);
             }
             else{
@@ -144,7 +159,7 @@ int main()
     gettimeofday(&head,NULL);
     Neon();
     gettimeofday(&tail,NULL);
-    cout<<"Special Gauss, Neon version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+    cout<<"Special Gauss, Neon version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
     //Print();
     return 0;
 }
