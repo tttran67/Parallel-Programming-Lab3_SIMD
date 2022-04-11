@@ -2,17 +2,25 @@
 #include <fstream>
 #include <sstream>
 #include<bitset>
+#include<immintrin.h>
+#include<sys/time.h>
 using namespace std;
-const int Columnnum = 1011;//254
-const int Rnum = 539;//106
-const int Enum = 263;//53
-const int ArrayColumn = 32;//8
-const int leftbit = 13;//32 - (1 + 1010 % 32) = 13
+//const int Columnnum = 43577;//254
+const int Columnnum = 254;
+//const int Rnum = 39477;//106
+const int Rnum = 106;
+//const int Enum = 54274;//53
+const int Enum = 53;
+//const int ArrayColumn = 1362;//8 = 254 / 32 ceiling
+const int ArrayColumn = 1362;//8 = 254 / 32 ceiling
+//const int leftbit = 7;//32 - (1 + 43576 % 32) = 7
+const int leftbit = 2;
 //32 - (1 + 253 % 32) = 2
 unsigned int R [Columnnum][ArrayColumn];
 unsigned int E [Enum][ArrayColumn];
 int First[Enum];
 bitset<32> MyBit(0);
+__m128i te,tr;
 int Find_First(int index){
     int j = 0;
     int cnt = 0;
@@ -82,12 +90,27 @@ void Set_R(int eindex,int rindex){
         R[rindex][j] = E[eindex][j];
     }
 }
-void XOR(int eindex,int rindex){
-    for(int j = 0;j < ArrayColumn; j++){
+void XOR(int eindex,int rindex){//we do parallel programming here.
+    /*for(int j = 0;j < ArrayColumn; j++){
+        E[eindex][j] = E[eindex][j] ^ R[rindex][j];
+    }*/
+    int j = 0;
+    for(;j + 4 <= ArrayColumn; j += 4){
+        te = _mm_loadu_ps((float*)&(E[eindex][j]));
+        //vaE = vld1q_u32(&(E[eindex][j]));
+        tr = _mm_loadu_ps((float*)&(R[rindex][j]));
+        //vaR = vld1q_u32(&(R[rindex][j]));
+        te = _mm_xor_ps(te,tr);
+        //vaE = veorq_u32(vaE,vaR);
+        _mm_store_ss((float*)&(E[eindex][j]),te);
+        //vst1q_u32(&(E[eindex][j],vaE));
+    }
+    for(;j < ArrayColumn; j++){
         E[eindex][j] = E[eindex][j] ^ R[rindex][j];
     }
+
 }
-void Serial(){
+void SSE(){
     for(int i = 0;i < Enum; i++){
         while(First[i] != -1){
             if(!Is_NULL(First[i])){
@@ -122,9 +145,14 @@ void Print(){//Print the answer
 int main()
 {
 
+    struct timeval head;
+    struct timeval tail;
     Init_R();
     Init_E();
-    Serial();
-    Print();
+    gettimeofday(&head,NULL);
+    SSE();
+    gettimeofday(&tail,NULL);
+    cout<<"Special Gauss, SSE version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000+(tail.tv_usec-head.tv_usec)/1000<<"ms"<<endl;
+    //Print();
     return 0;
 }
