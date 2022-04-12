@@ -5,17 +5,16 @@
 #include<immintrin.h>
 #include<sys/time.h>
 using namespace std;
-//const int Columnnum = 43577;//254
+//const int Columnnum = 43577;
 const int Columnnum = 254;
-//const int Rnum = 39477;//106
+//const int Rnum = 39477;
 const int Rnum = 106;
-//const int Enum = 54274;//53
+//const int Enum = 54274;
 const int Enum = 53;
-//const int ArrayColumn = 1362;//8 = 254 / 32 ceiling
-const int ArrayColumn = 1362;//8 = 254 / 32 ceiling
+//const int ArrayColumn = 1362;
+const int ArrayColumn = 8;//8 = 254 / 32 ceiling
 //const int leftbit = 7;//32 - (1 + 43576 % 32) = 7
-const int leftbit = 2;
-//32 - (1 + 253 % 32) = 2
+const int leftbit = 2;//32 - (1 + 253 % 32) = 2
 unsigned int R [Columnnum][ArrayColumn];
 unsigned int E [Enum][ArrayColumn];
 int First[Enum];
@@ -110,17 +109,17 @@ void Align_XOR(int eindex,int rindex){//we do parallel programming here.
         j++;
     }
     for(;j + 16 <= ArrayColumn; j += 16){
-        te = _mm512_loadu_ps((float*)&(E[eindex][j]));
-        tr = _mm512_loadu_ps((float*)&(R[rindex][j]));
+        te = _mm512_load_ps((float*)&(E[eindex][j]));
+        tr = _mm512_load_ps((float*)&(R[rindex][j]));
         te = _mm512_xor_ps(te,tr);
-        _mm512_storeu_ps((float*)&(E[eindex][j]),te);
+        _mm512_store_ps((float*)&(E[eindex][j]),te);
     }
     for(;j < ArrayColumn; j++){
         E[eindex][j] = E[eindex][j] ^ R[rindex][j];
     }
 
 }
-void SSE(){
+void AVX(){
     for(int i = 0;i < Enum; i++){
         while(First[i] != -1){
             if(!Is_NULL(First[i])){
@@ -161,9 +160,9 @@ int main()
     Init_R();
     Init_E();
     gettimeofday(&head,NULL);
-    SSE();
+    AVX();
     gettimeofday(&tail,NULL);
-    cout<<"Special Gauss, SSE version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
+    cout<<"Special Gauss, AVX version, Enum: "<<Enum<<", Time: "<<(tail.tv_sec-head.tv_sec)*1000.0+(tail.tv_usec-head.tv_usec)/1000.0<<"ms"<<endl;
     //Print();
     return 0;
 }

@@ -4,12 +4,16 @@
 #include<bitset>
 #include<sys/time.h>
 using namespace std;
-const int Columnnum = 43577;//254
-const int Rnum = 39477;//106
-const int Enum = 54274;//53
-const int ArrayColumn = 1362;//8 = 254 / 32 ceiling
-const int leftbit = 7;//32 - (1 + 43576 % 32) = 7
-//32 - (1 + 253 % 32) = 2
+//const int Columnnum = 43577;
+const int Columnnum = 254;
+//const int Rnum = 39477;
+const int Rnum = 106;
+//const int Enum = 54274;
+const int Enum = 53;
+//const int ArrayColumn = 1362;
+const int ArrayColumn = 8;//8 = 254 / 32 ceiling
+//const int leftbit = 7;//32 - (1 + 43576 % 32) = 7
+const int leftbit = 2;//32 - (1 + 253 % 32) = 2
 unsigned int R [Columnnum][ArrayColumn];
 unsigned int E [Enum][ArrayColumn];
 int First[Enum];
